@@ -1,8 +1,5 @@
 package hbrs.ooka;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 
 /**

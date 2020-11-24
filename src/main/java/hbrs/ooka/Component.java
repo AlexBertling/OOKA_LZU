@@ -12,6 +12,16 @@ public class Component {
     private Method startMethod;
     private Method stopMethod;
 
+    private String state;
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public Method getStartMethod() {
         return startMethod;
     }

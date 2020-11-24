@@ -33,7 +33,7 @@ public class App
                     String name = s[1];
                     String pathToJar = s[2];
                     try {
-                        lzu.deploy(name, pathToJar);
+                        lzu.deployComponent(name, pathToJar);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ClassNotFoundException e) {
