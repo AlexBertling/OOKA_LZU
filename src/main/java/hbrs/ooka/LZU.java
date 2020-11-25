@@ -45,9 +45,8 @@ public class LZU {
             className = className.replace('/', '.');
 
             Class c = cl.loadClass(className);
-            Method[] methods = c.getDeclaredMethods();
+            Method[] methods = c.getMethods();
 
-            System.out.println(c.getName());
             for (Method m : methods) {
                 String annotations = Arrays.toString(m.getDeclaredAnnotations());
                 if (annotations.contains("@hbrs.ooka.annotation.Start()")) {
@@ -61,20 +60,19 @@ public class LZU {
         }
 
         components.put(name, component);
+        System.out.println("Deployment of " + name + " done");
     }
 
-    public void startComponent(String name) throws InvocationTargetException, IllegalAccessException {
+    public void startComponent(String name) {
+        System.out.println("Start component " + name);
         Component component = components.get(name);
-        Method startMethod = component.getStartMethod();
-        startMethod.invoke(null);
-        component.setState(State.RUNNING);
+        component.start();
     }
 
-    public void stopComponent(String name) throws InvocationTargetException, IllegalAccessException {
+    public void stopComponent(String name) {
+        System.out.println("Stop component " + name);
         Component component = components.get(name);
-        Method stopMethod = component.getStopMethod();
-        stopMethod.invoke(null);
-        component.setState(State.STOPPED);
+        component.stop();
     }
 
     public HashMap<String, Component> getComponents() {

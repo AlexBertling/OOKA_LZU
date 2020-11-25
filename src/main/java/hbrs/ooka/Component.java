@@ -1,8 +1,9 @@
 package hbrs.ooka;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class Component {
+public class Component implements Runnable {
 
     private String name;
     private String description;
@@ -13,6 +14,39 @@ public class Component {
     private Method stopMethod;
 
     private String state;
+
+    private Thread thread;
+
+    @Override
+    public void run() {
+        Method startMethod = this.getStartMethod();
+        try {
+            startMethod.invoke(null);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void start(){
+        thread = new Thread(this);
+        thread.start();
+        setState(State.RUNNING);
+    }
+
+    public void stop(){
+        thread.interrupt();
+        setState(State.STOPPED);
+    }
+
+    public Thread getThread() {
+        return thread;
+    }
+
+    public void setThread(Thread thread) {
+        this.thread = thread;
+    }
 
     public String getState() {
         return state;
@@ -77,4 +111,5 @@ public class Component {
     public void setStartClass(Class startClass) {
         this.startClass = startClass;
     }
+
 }
