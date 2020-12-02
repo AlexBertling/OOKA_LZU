@@ -20,7 +20,7 @@ Instanz einer Komponente stoppen:
 
 Alle Instanzen einer Komponente stoppen:
 
-<code>start \<name\> all</code>
+<code>stop \<name\> all</code>
 
 ## TODO
 - Command Pattern richtig umsetzen
