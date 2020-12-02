@@ -2,8 +2,10 @@ package hbrs.ooka;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Random;
 
-public class Component implements Runnable {
+public class Component {
 
     private String name;
     private String description;
@@ -13,39 +15,74 @@ public class Component implements Runnable {
     private Method startMethod;
     private Method stopMethod;
 
-    private String state;
+    private String state = State.INITIALZED;
 
-    private Thread thread;
+    private final HashMap<String, Thread> threads = new HashMap<>();
+    private final HashMap<String, Object> instances = new HashMap<>();
 
-    @Override
-    public void run() {
-        Method startMethod = this.getStartMethod();
+    public String start(){
+        final String instanceId = String.valueOf(Math.abs(new Random().nextLong()));
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Object instance = startClass.getDeclaredConstructor().newInstance();
+                    startMethod.invoke(instance);
+                    instances.put(instanceId, instance);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Thread thread = new Thread(runnable);
+        thread.start();
+        threads.put(instanceId, thread);
+        setState(State.RUNNING);
+
+        return instanceId;
+    }
+
+    public void stop(){ // stop all instances
+        HashMap<String, Object> instances = getInstances();
+        while(instances.size()>0){
+            String instanceId = (String) instances.keySet().toArray()[0];
+            stop(instanceId);
+            instances = getInstances();
+        }
+    }
+
+    public void stop(String instanceId) {
+        Object instance = instances.remove(instanceId);
         try {
-            startMethod.invoke(null);
+            stopMethod.invoke(instance);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Thread thread = threads.remove(instanceId);
+        thread.stop();
+        setState(State.DEPLOYED);
     }
 
-    public void start(){
-        thread = new Thread(this);
-        thread.start();
-        setState(State.RUNNING);
+    public HashMap<String, Thread> getThreads() {
+        return threads;
     }
 
-    public void stop(){
-        thread.interrupt();
-        setState(State.STOPPED);
-    }
-
-    public Thread getThread() {
-        return thread;
-    }
-
-    public void setThread(Thread thread) {
-        this.thread = thread;
+    public HashMap<String, Object> getInstances() {
+        return instances;
     }
 
     public String getState() {

@@ -3,10 +3,6 @@ package hbrs.ooka;
 import java.io.IOException;
 import java.util.Scanner;
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     private static final Scanner scanner = new Scanner(System.in);
@@ -17,15 +13,13 @@ public class App
     {
         System.out.println( "####### LZU für Software-Komponenten #######" );
 
-        boolean quit = false;
-        while (!quit){
+        boolean exit = false;
+        while (!exit){
 
             System.out.print("Command: ");
             String command = scanner.nextLine();
 
-            if(command.equals("q")){
-                quit = true;
-            } else if(command.contains("deploy")){
+            if(command.contains("deploy")){
                 String[] s = command.split(" ");
                 if(s.length < 3){
                     System.out.println("Please provide a component name and the path to the jar file!");
@@ -41,7 +35,42 @@ public class App
                     }
                 }
 
-            } else {
+            } else if(command.contains("remove")){
+                String[] s = command.split(" ");
+                if(s.length < 2){
+                    System.out.println("Please provide a component name!");
+                } else {
+                    String name = s[1];
+                    lzu.removeComponent(name);
+                }
+
+            } else if(command.contains("start")){
+                String[] s = command.split(" ");
+                if(s.length < 2){
+                    System.out.println("Please provide a component name!");
+                } else {
+                    String name = s[1];
+                    lzu.startComponent(name);
+                }
+            } else if(command.contains("stop")){
+                String[] s = command.split(" ");
+                if(s.length < 3){
+                    System.out.println("Please provide a component name and an instanceId!");
+                } else {
+                    String name = s[1];
+                    String instanceId = s[2];
+                    if(instanceId.equals("all")){
+                        lzu.stopComponent(name);
+                    } else {
+                        lzu.stopComponent(name, instanceId);
+                    }
+                }
+            } else if(command.contains("exit")){
+                lzu.stop();
+                exit = true;
+            }
+
+            else {
                 System.out.println("Command not found...");
             }
         }
