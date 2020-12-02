@@ -11,6 +11,7 @@ public class Component {
     private String description;
     private String author;
     private String version;
+    private ClassLoader classLoader;
     private Class startClass;
     private Method startMethod;
     private Method stopMethod;
@@ -83,6 +84,14 @@ public class Component {
 
     public HashMap<String, Object> getInstances() {
         return instances;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     public String getState() {

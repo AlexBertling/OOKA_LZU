@@ -13,6 +13,8 @@ public class App
     {
         System.out.println( "####### LZU für Software-Komponenten #######" );
 
+        lzu.start();
+
         boolean exit = false;
         while (!exit){
 

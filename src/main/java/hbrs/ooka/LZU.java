@@ -11,10 +11,10 @@ import java.util.jar.JarFile;
 
 public class LZU {
 
-    private HashMap<String, Component> components = new HashMap<>();
+    private final HashMap<String, Component> components = new HashMap<>();
 
     public void start(){
-
+        // what should be done here?
     }
 
     public void stop(){
@@ -37,6 +37,7 @@ public class LZU {
 
         URL[] urls = {new URL("jar:file:" + pathToJar + "!/")};
         URLClassLoader cl = URLClassLoader.newInstance(urls);
+        component.setClassLoader(cl);
 
         while (e.hasMoreElements() && component.getStartClass() == null) {
             JarEntry je = e.nextElement();
