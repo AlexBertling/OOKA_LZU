@@ -69,8 +69,9 @@ public class LZUTest {
     @Test
     public void deployStartStopTwoComponents() throws IOException, ClassNotFoundException, InterruptedException {
         String name = KEY_DUMMY;
-        String instanceId1 = deployStart(name);
-        String instanceId2 = deployStart(name);
+        deploy(name);
+        String instanceId1 = start(name);
+        String instanceId2 = start(name);
         Thread.sleep(2000);
         assertEquals(State.RUNNING, lzu.getComponents().get(name).getState());
 
@@ -83,12 +84,14 @@ public class LZUTest {
     @Test
     public void deployStartTwoComponentsStopLZU() throws IOException, ClassNotFoundException, InterruptedException {
         String name = KEY_DUMMY;
-        String instanceId1 = deployStart(name);
-        String instanceId2 = deployStart(name);
+        deploy(name);
+        String instanceId1 = start(name);
+        String instanceId2 = start(name);
         Thread.sleep(2000);
         assertEquals(State.RUNNING, lzu.getComponents().get(name).getState());
 
         lzu.stop();
+        Thread.sleep(1000);
         assertEquals(State.DEPLOYED, lzu.getComponents().get(name).getState());
     }
 }
