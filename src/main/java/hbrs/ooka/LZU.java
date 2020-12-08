@@ -1,5 +1,7 @@
 package hbrs.ooka;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,7 +10,6 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import hbrs.ooka.annotation.Start;
 
 public class LZU {
 
@@ -64,6 +65,7 @@ public class LZU {
         }
 
         components.put(name, component);
+        persistCurrentConfiguration();
         System.out.println("Deployment of " + name + " done");
     }
 
@@ -71,6 +73,7 @@ public class LZU {
         System.out.println("Remove Component " + name );
         stopComponent(name);
         components.remove(name);
+        persistCurrentConfiguration();
         System.out.println("Removal of " + name + " done");
     }
 
@@ -92,6 +95,23 @@ public class LZU {
         System.out.println("Stop instance " + instanceId + " of component " + name);
         Component component = components.get(name);
         component.stop(instanceId);
+    }
+
+    public void persistCurrentConfiguration(){
+        String filename = "lzu_configuration.txt";
+        File file = new File(filename);
+        try {
+            file.createNewFile();
+            FileWriter writer = new FileWriter(file);
+            writer.flush();
+            int count = 1;
+            for(Map.Entry<String, Component> e : components.entrySet()){
+                writer.append(count++ + ": " + e.getKey() + "\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public HashMap<String, Component> getComponents() {
