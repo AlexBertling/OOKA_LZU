@@ -8,6 +8,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import hbrs.ooka.annotation.Start;
 
 public class LZU {
 
@@ -52,12 +53,11 @@ public class LZU {
             Method[] methods = c.getMethods();
 
             for (Method m : methods) {
-                String annotations = Arrays.toString(m.getDeclaredAnnotations());
-                if (annotations.contains("@hbrs.ooka.annotation.Start()")) {
+                if(m.isAnnotationPresent(hbrs.ooka.annotation.Start.class)){
                     component.setStartClass(c);
                     component.setStartMethod(m);
                 }
-                if (annotations.contains("@hbrs.ooka.annotation.Stop()")) {
+                if(m.isAnnotationPresent(hbrs.ooka.annotation.Stop.class)){
                     component.setStopMethod(m);
                 }
             }
