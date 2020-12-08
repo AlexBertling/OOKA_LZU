@@ -24,3 +24,4 @@ Alle Instanzen einer Komponente stoppen:
 
 ## TODO
 - Command Pattern richtig umsetzen
+- Errorhandling
