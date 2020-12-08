@@ -1,5 +1,8 @@
 package hbrs.ooka;
 
+import hbrs.ooka.lzu.Component;
+import hbrs.ooka.lzu.LZU;
+import hbrs.ooka.lzu.State;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

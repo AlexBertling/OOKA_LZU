@@ -1,9 +1,16 @@
-package hbrs.ooka;
+package hbrs.ooka.lzu;
 
+import hbrs.ooka.log.ConcreteLogger;
+
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class Component {
 
@@ -11,15 +18,49 @@ public class Component {
     private String description;
     private String author;
     private String version;
+    private String pathToJar;
     private ClassLoader classLoader;
     private Class startClass;
     private Method startMethod;
     private Method stopMethod;
+    private Method injectMethod;
 
     private String state = State.INITIALZED;
 
     private final HashMap<String, Thread> threads = new HashMap<>();
     private final HashMap<String, Object> instances = new HashMap<>();
+
+    public void init() throws IOException, ClassNotFoundException {
+        JarFile jarFile = new JarFile(pathToJar);
+        Enumeration<JarEntry> e = jarFile.entries();
+        ClassLoader cl = this.getClassLoader();
+
+        while (e.hasMoreElements() && this.getStartClass() == null) {
+            JarEntry je = e.nextElement();
+            if (je.isDirectory() || !je.getName().endsWith(".class")) {
+                continue;
+            }
+            // -6 because of .class
+            String className = je.getName().substring(0, je.getName().length() - 6);
+            className = className.replace('/', '.');
+
+            Class c = cl.loadClass(className);
+            Method[] methods = c.getMethods();
+
+            for (Method m : methods) {
+                if(m.isAnnotationPresent(hbrs.ooka.annotation.Start.class)){
+                    this.setStartClass(c);
+                    this.setStartMethod(m);
+                }
+                if(m.isAnnotationPresent(hbrs.ooka.annotation.Stop.class)){
+                    this.setStopMethod(m);
+                }
+                if(m.isAnnotationPresent(hbrs.ooka.annotation.Inject.class)){
+                    this.setInjectMethod(m);
+                }
+            }
+        }
+    }
 
     public String start(){
         final String instanceId = String.valueOf(Math.abs(new Random().nextLong()));
@@ -28,7 +69,8 @@ public class Component {
             public void run() {
                 try {
                     Object instance = startClass.getDeclaredConstructor().newInstance();
-                    startMethod.invoke(instance);
+                    getInjectMethod().invoke(instance, new ConcreteLogger());
+                    getStartMethod().invoke(instance);
                     instances.put(instanceId, instance);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
@@ -158,4 +200,19 @@ public class Component {
         this.startClass = startClass;
     }
 
+    public String getPathToJar() {
+        return pathToJar;
+    }
+
+    public void setPathToJar(String pathToJar) {
+        this.pathToJar = pathToJar;
+    }
+
+    public Method getInjectMethod() {
+        return injectMethod;
+    }
+
+    public void setInjectMethod(Method injectMethod) {
+        this.injectMethod = injectMethod;
+    }
 }

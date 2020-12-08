@@ -1,4 +1,4 @@
-package hbrs.ooka;
+package hbrs.ooka.lzu;
 
 public class State {
 

@@ -1,9 +1,11 @@
-package hbrs.ooka;
+package hbrs.ooka.lzu;
+
+import hbrs.ooka.log.Logger;
+import hbrs.ooka.log.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -33,35 +35,16 @@ public class LZU {
 
         Component component = new Component();
         component.setName(name);
-
-        JarFile jarFile = new JarFile(pathToJar);
-        Enumeration<JarEntry> e = jarFile.entries();
+        component.setPathToJar(pathToJar);
 
         URL[] urls = {new URL("jar:file:" + pathToJar + "!/")};
         URLClassLoader cl = URLClassLoader.newInstance(urls);
         component.setClassLoader(cl);
 
-        while (e.hasMoreElements() && component.getStartClass() == null) {
-            JarEntry je = e.nextElement();
-            if (je.isDirectory() || !je.getName().endsWith(".class")) {
-                continue;
-            }
-            // -6 because of .class
-            String className = je.getName().substring(0, je.getName().length() - 6);
-            className = className.replace('/', '.');
-
-            Class c = cl.loadClass(className);
-            Method[] methods = c.getMethods();
-
-            for (Method m : methods) {
-                if(m.isAnnotationPresent(hbrs.ooka.annotation.Start.class)){
-                    component.setStartClass(c);
-                    component.setStartMethod(m);
-                }
-                if(m.isAnnotationPresent(hbrs.ooka.annotation.Stop.class)){
-                    component.setStopMethod(m);
-                }
-            }
+        component.init();
+        if(component.getStartMethod() == null || component.getStopMethod() == null || component.getInjectMethod() == null){
+            System.out.println("Start-/Stop-/Logger-Inject-Method missing in component!");
+            return;
         }
 
         components.put(name, component);

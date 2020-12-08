@@ -1,5 +1,7 @@
 package hbrs.ooka;
 
+import hbrs.ooka.lzu.LZU;
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -18,7 +20,6 @@ public class App
         boolean exit = false;
         while (!exit){
 
-            System.out.print("Command: ");
             String command = scanner.nextLine();
 
             if(command.contains("deploy")){
