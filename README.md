@@ -22,6 +22,10 @@ Alle Instanzen einer Komponente stoppen:
 
 <code>stop \<name\> all</code>
 
+Deployte Komponenten der LZU abfragen:
+
+<code>state</code>
+
 ## TODO
 - Command Pattern richtig umsetzen
 - Errorhandling

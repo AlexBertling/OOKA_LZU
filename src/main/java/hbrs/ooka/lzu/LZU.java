@@ -12,6 +12,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 public class LZU {
 
@@ -97,8 +98,17 @@ public class LZU {
         }
     }
 
+    public void printState() {
+        int count = 0;
+        for(Map.Entry<String, Component> e : components.entrySet()){
+            String name = e.getKey();
+            Component c = e.getValue();
+            String instances = String.join(", ", c.getInstances().keySet());
+            System.out.println(count++ + ": " + name + ", Instances: " + instances);
+        }
+    }
+
     public HashMap<String, Component> getComponents() {
         return components;
     }
-
 }

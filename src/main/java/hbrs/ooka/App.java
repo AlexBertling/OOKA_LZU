@@ -68,6 +68,8 @@ public class App
                         lzu.stopComponent(name, instanceId);
                     }
                 }
+            } else if(command.contains("state")){
+                lzu.printState();
             } else if(command.contains("exit")){
                 lzu.stop();
                 exit = true;
